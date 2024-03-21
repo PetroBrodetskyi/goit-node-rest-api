@@ -1,8 +1,8 @@
 import * as contactsServices from "../servises/contactsServices.js"
 import HttpError from "../helpers/HttpError.js";
 import ctrlWrapper from "../helpers/ctrlWrapper.js";
-import mongoose from 'mongoose';
 import { updateContactSchema } from "../schemas/contactsSchemas.js";
+import { handleNotFound } from "../helpers/errorHandlers.js";
 
 
 export const getAllContacts = ctrlWrapper(async (req, res) => {
@@ -15,28 +15,18 @@ export const getAllContacts = ctrlWrapper(async (req, res) => {
 
 export const getOneContact = ctrlWrapper(async (req, res) => {
   const { id } = req.params;
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ message: 'Invalid contact ID' });
-  }
-
   const oneContact = await contactsServices.getOneContact(id);
   if (!oneContact) {
-    return res.status(404).json({ message: 'Not found' });
+    return handleNotFound(req, res);
   }
   res.json(oneContact);
 });
 
 export const deleteContact = ctrlWrapper(async (req, res) => {
   const { id } = req.params;
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ message: 'Invalid contact ID' });
-  }
-
   const deletedContact = await contactsServices.deleteContact(id);
   if (!deletedContact) {
-    return res.status(404).json({ message: 'Not found' });
+    return handleNotFound(req, res);
   }
   res.json(deletedContact);
 });
@@ -50,9 +40,10 @@ export const updateContact = ctrlWrapper(async (req, res) => {
   const { id } = req.params;
   const { body } = req;
 
+
   const existingContact = await contactsServices.updateContact(id);
   if (!existingContact) {
-    return res.status(404).json({ message: "Not found" });
+    return handleNotFound(req, res);
   }
 
   try {
@@ -75,15 +66,15 @@ export const updateStatusContact = ctrlWrapper(async (req, res) => {
   const { contactId } = req.params;
   const { favorite } = req.body;
 
-    const updatedFavorite = await contactsServices.updateStatusContact(
+  const updatedFavorite = await contactsServices.updateStatusContact(
       contactId,
       { favorite },
       { new: true }
   );
   
-    if (!updatedFavorite) {
-      return res.status(404).json({ message: "Not found" });
-    }
+  if (!updatedFavorite) {
+    return handleNotFound(req, res);
+  }
 
     res.status(200).json(updatedFavorite);
   });

@@ -10,4 +10,4 @@ export const createContact = (contactData) => Contact.create(contactData);
 
 export const updateContact = (id, data) => Contact.findByIdAndUpdate(id, data, { new: true });
 
-export const updateStatusContact = (id, data, options) => Contact.findByIdAndUpdate(id, data, options);
+export const updateStatusContact = (contactId, data, options) => Contact.findByIdAndUpdate(contactId, data, options);
