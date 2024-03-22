@@ -63,11 +63,11 @@ export const updateContact = ctrlWrapper(async (req, res) => {
 
 
 export const updateStatusContact = ctrlWrapper(async (req, res) => {
-  const { contactId } = req.params;
+  const { id } = req.params;
   const { favorite } = req.body;
 
   const updatedFavorite = await contactsServices.updateStatusContact(
-      contactId,
+      id,
       { favorite },
       { new: true }
   );
