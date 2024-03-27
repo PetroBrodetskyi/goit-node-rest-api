@@ -1,6 +1,5 @@
 import * as userServices from "../servises/usersServices.js"
 import bcrypt from "bcrypt";
-import User from "../models/userModel.js";
 import HttpError from "../helpers/HttpError.js";
 import ctrlWrapper from "../helpers/ctrlWrapper.js";
 import { registerUserSchema, loginUserSchema } from "../schemas/usersSchemas.js"
@@ -11,8 +10,10 @@ const { SECRET_KEY } = process.env;
 export const registerUser = ctrlWrapper(async (req, res) => {
 
     const { error } = registerUserSchema.validate(req.body);
-    if (error)
-    throw HttpError(400, "Помилка від Joi або іншої бібліотеки валідації");
+    if (error) {
+        res.status(400).json({ message: error.message });
+    return;
+    }
 
     const { email, password } = req.body;
 
@@ -39,8 +40,10 @@ export const registerUser = ctrlWrapper(async (req, res) => {
 export const loginUser = ctrlWrapper(async (req, res) => {
 
     const { error } = loginUserSchema.validate(req.body);
-    if (error)
-        throw HttpError(401, "Помилка від Joi або іншої бібліотеки валідації");
+    if (error) {
+        res.status(401).json({ message: error.message });
+    return;
+    }
     
     const { email, password } = req.body;
     
@@ -68,8 +71,4 @@ export const loginUser = ctrlWrapper(async (req, res) => {
         subscription: existingUser.subscription,
     }
     });
-});
-
-
-
-
+}); 

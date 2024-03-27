@@ -3,12 +3,20 @@ import HttpError from "../helpers/HttpError.js";
 import ctrlWrapper from "../helpers/ctrlWrapper.js";
 import { updateContactSchema } from "../schemas/contactsSchemas.js";
 import { handleNotFound } from "../helpers/errorHandlers.js";
+import User from "../models/userModel.js";
 
 
 export const getAllContacts = ctrlWrapper(async (req, res) => {
-  const { _id: owner } = req.user;
-  const contacts = await contactsServices.getAllContacts({owner});
-  if (!contacts) {
+  const { page = 1, limit = 20 } = req.query;
+  const currentUser = req.user;
+
+  const options = {
+    page: parseInt(page, 10),
+    limit: parseInt(limit, 10)
+  };
+
+  const contacts = await contactsServices.getAllContacts(currentUser._id, options).populate("owner", "email");
+  if (contacts.length === 0) {
     throw HttpError(404, "Not found");
   }
   res.json(contacts);
@@ -16,7 +24,8 @@ export const getAllContacts = ctrlWrapper(async (req, res) => {
 
 export const getOneContact = ctrlWrapper(async (req, res) => {
   const { id } = req.params;
-  const oneContact = await contactsServices.getOneContact(id);
+  const { _id: owner } = req.user;
+  const oneContact = await contactsServices.getOneContact(id, owner);
   if (!oneContact) {
     return handleNotFound(req, res);
   }
@@ -25,7 +34,8 @@ export const getOneContact = ctrlWrapper(async (req, res) => {
 
 export const deleteContact = ctrlWrapper(async (req, res) => {
   const { id } = req.params;
-  const deletedContact = await contactsServices.deleteContact(id);
+  const { _id: owner } = req.user;
+  const deletedContact = await contactsServices.deleteContact(id, owner);
   if (!deletedContact) {
     return handleNotFound(req, res);
   }
@@ -42,9 +52,9 @@ export const createContact = ctrlWrapper(async (req, res) => {
 export const updateContact = ctrlWrapper(async (req, res) => {
   const { id } = req.params;
   const { body } = req;
+  const { _id: owner } = req.user;
 
-
-  const existingContact = await contactsServices.updateContact(id);
+  const existingContact = await contactsServices.updateContact(id, body, owner);
   if (!existingContact) {
     return handleNotFound(req, res);
   }
@@ -59,7 +69,7 @@ export const updateContact = ctrlWrapper(async (req, res) => {
     return res.status(400).json({ message: "Body must have at least one field" });
   }
 
-  const updatedContact = await contactsServices.updateContact(id, body, { new: true });
+  const updatedContact = await contactsServices.updateContact(id, body, owner, { new: true });
 
   res.status(200).json(updatedContact);
 });
