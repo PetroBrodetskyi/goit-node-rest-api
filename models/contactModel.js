@@ -1,4 +1,7 @@
+import Joi from "joi";
 import mongoose from "mongoose";
+
+const { Schema } = mongoose;
 
 const contactSchema = new mongoose.Schema({
   name: {
@@ -6,13 +9,19 @@ const contactSchema = new mongoose.Schema({
     required: [true, 'Set name for contact'],
   },
   email: String,
-  phone: String,
-  favorite: {
+    phone: String,
+    favorite: {
     type: Boolean,
     default: false,
-  }
+  },
+  owner: {
+      type: Schema.Types.ObjectId,
+      ref: 'user',
+      required: true,
+    }
 }, { versionKey: false });
 
 const Contact = mongoose.model('Contact', contactSchema);
+
 
 export default Contact;

@@ -6,7 +6,8 @@ import { handleNotFound } from "../helpers/errorHandlers.js";
 
 
 export const getAllContacts = ctrlWrapper(async (req, res) => {
-  const contacts = await contactsServices.getAllContacts();
+  const { _id: owner } = req.user;
+  const contacts = await contactsServices.getAllContacts({owner});
   if (!contacts) {
     throw HttpError(404, "Not found");
   }
@@ -32,7 +33,9 @@ export const deleteContact = ctrlWrapper(async (req, res) => {
 });
 
 export const createContact = ctrlWrapper(async (req, res) => {
-  const result = await contactsServices.createContact(req.body);
+  const { name, email, phone, favorite } = req.body;
+  const owner = req.user._id;
+  const result = await contactsServices.createContact({ name, email, phone, favorite, owner });
   res.status(201).json(result);
 });
 
