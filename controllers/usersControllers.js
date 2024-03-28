@@ -4,6 +4,7 @@ import HttpError from "../helpers/HttpError.js";
 import ctrlWrapper from "../helpers/ctrlWrapper.js";
 import { registerUserSchema, loginUserSchema } from "../schemas/usersSchemas.js"
 import jwt from "jsonwebtoken";
+import User from "../models/userModel.js";
 
 const { SECRET_KEY } = process.env;
 
@@ -64,6 +65,8 @@ export const loginUser = ctrlWrapper(async (req, res) => {
 
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
 
+    await User.findByIdAndUpdate(existingUser._id, { token });
+
     res.status(200).json({
         token,
         user: {
@@ -71,4 +74,20 @@ export const loginUser = ctrlWrapper(async (req, res) => {
         subscription: existingUser.subscription,
     }
     });
-}); 
+});
+
+export const getCurrentUser = ctrlWrapper(async (req, res) => {
+    const { email, subscription } = req.user;
+
+    res.json({
+        email,
+        subscription,
+    })
+});
+
+export const logoutUser = ctrlWrapper(async(req, res) => {
+    const { _id } = req.user;
+    await User.findByIdAndUpdate(_id, { token: null });
+
+      res.status(204).json({ message: "No Content" });
+});

@@ -3,7 +3,6 @@ import HttpError from "../helpers/HttpError.js";
 import ctrlWrapper from "../helpers/ctrlWrapper.js";
 import { updateContactSchema } from "../schemas/contactsSchemas.js";
 import { handleNotFound } from "../helpers/errorHandlers.js";
-import User from "../models/userModel.js";
 
 
 export const getAllContacts = ctrlWrapper(async (req, res) => {
@@ -16,7 +15,7 @@ export const getAllContacts = ctrlWrapper(async (req, res) => {
   };
 
   const contacts = await contactsServices.getAllContacts(currentUser._id, options).populate("owner", "email");
-  if (contacts.length === 0) {
+    if (contacts.length === 0) {
     throw HttpError(404, "Not found");
   }
   res.json(contacts);
