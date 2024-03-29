@@ -31,8 +31,10 @@ export const registerUser = ctrlWrapper(async (req, res) => {
     });
 
     res.status(201).json({
-        email: newUser.email,
-        subscription: newUser.subscription,
+        user: {
+            email: newUser.email,
+            subscription: newUser.subscription,
+        }
     });
 
 });

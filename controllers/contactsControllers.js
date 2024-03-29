@@ -15,9 +15,7 @@ export const getAllContacts = ctrlWrapper(async (req, res) => {
   };
 
   const contacts = await contactsServices.getAllContacts(currentUser._id, options).populate("owner", "email");
-    if (contacts.length === 0) {
-    throw HttpError(404, "Not found");
-  }
+    
   res.json(contacts);
 });
 
@@ -77,6 +75,12 @@ export const updateContact = ctrlWrapper(async (req, res) => {
 export const updateStatusContact = ctrlWrapper(async (req, res) => {
   const { id } = req.params;
   const { favorite } = req.body;
+  const { _id: owner } = req.user;
+
+  const existingContact = await contactsServices.getOneContact(id, owner);
+  if (!existingContact) {
+    return handleNotFound(req, res);
+  }
 
   const updatedFavorite = await contactsServices.updateStatusContact(
       id,
