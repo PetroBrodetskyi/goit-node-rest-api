@@ -77,13 +77,10 @@ export const updateStatusContact = ctrlWrapper(async (req, res) => {
   const { favorite } = req.body;
   const { _id: owner } = req.user;
 
-  const existingContact = await contactsServices.getOneContact(id, owner);
-  if (!existingContact) {
-    return handleNotFound(req, res);
-  }
 
   const updatedFavorite = await contactsServices.updateStatusContact(
       id,
+      owner,
       { favorite },
       { new: true }
   );
