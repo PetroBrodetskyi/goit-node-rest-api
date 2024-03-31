@@ -50,6 +50,7 @@ export const updateContact = ctrlWrapper(async (req, res) => {
   const { id } = req.params;
   const { body } = req;
   const { _id: owner } = req.user;
+  const options = { new: true };
 
   const existingContact = await contactsServices.updateContact(id, body, owner);
   if (!existingContact) {
@@ -66,28 +67,25 @@ export const updateContact = ctrlWrapper(async (req, res) => {
     return res.status(400).json({ message: "Body must have at least one field" });
   }
 
-  const updatedContact = await contactsServices.updateContact(id, body, owner, { new: true });
+  const updatedContact = await contactsServices.updateContact(id, body, owner, options);
 
   res.status(200).json(updatedContact);
 });
 
-
 export const updateStatusContact = ctrlWrapper(async (req, res) => {
   const { id } = req.params;
   const { favorite } = req.body;
-  const { _id: owner } = req.user;
-
+  const options = { new: true };
 
   const updatedFavorite = await contactsServices.updateStatusContact(
-      id,
-      owner,
-      { favorite },
-      { new: true }
+    id,
+    { favorite },
+    options
   );
   
   if (!updatedFavorite) {
     return handleNotFound(req, res);
   }
 
-    res.status(200).json(updatedFavorite);
-  });
+  res.status(200).json(updatedFavorite);
+});
