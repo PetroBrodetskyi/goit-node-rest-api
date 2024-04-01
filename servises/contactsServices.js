@@ -14,4 +14,4 @@ export const updateContact = (id, body, owner, options) => Contact.findOneAndUpd
 
 
 
-export const updateStatusContact = (id, body, options) => Contact.findByIdAndUpdate(id, body, options);
+export const updateStatusContact = (id, body, owner, options) => Contact.findByIdAndUpdate({ _id: id, owner }, body, options);
