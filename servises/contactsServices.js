@@ -8,10 +8,6 @@ export const deleteContact = (id, owner) => Contact.findOneAndDelete({ _id: id, 
 
 export const createContact = (contactData) => Contact.create(contactData);
 
-
-
 export const updateContact = (id, body, owner, options) => Contact.findOneAndUpdate({ _id: id, owner }, body, options);
 
-
-
-export const updateStatusContact = (id, body, owner, options) => Contact.findByIdAndUpdate({ _id: id, owner }, body, options);
+export const updateStatusContact = (id, body, owner, options) => Contact.findOneAndUpdate({ _id: id, owner: owner }, body, options);

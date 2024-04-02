@@ -74,7 +74,8 @@ export const updateContact = ctrlWrapper(async (req, res) => {
 
 export const updateStatusContact = ctrlWrapper(async (req, res) => {
   const { id } = req.params;
-  const { favorite,owner } = req.body;
+  const { favorite } = req.body;
+  const { _id: owner } = req.user;
   const options = { new: true };
 
   const updatedFavorite = await contactsServices.updateStatusContact(
@@ -83,7 +84,7 @@ export const updateStatusContact = ctrlWrapper(async (req, res) => {
     owner,
     options
   );
-  
+
   if (!updatedFavorite) {
     return handleNotFound(req, res);
   }
