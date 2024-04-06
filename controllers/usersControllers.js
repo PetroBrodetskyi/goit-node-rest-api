@@ -59,7 +59,6 @@ export const loginUser = ctrlWrapper(async (req, res) => {
     const { email, password } = req.body;
     
     const existingUser = await userServices.findUser({ email });
-
     if (!existingUser) {
         throw HttpError(401, "Email or password is wrong");
     }
