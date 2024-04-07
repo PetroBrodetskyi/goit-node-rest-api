@@ -125,6 +125,10 @@ export const uploadAvatar = async (req, res) => {
                 return res.status(500).json({ message: "Server Error" });
             }
 
+            if (!req.file) {
+                return res.status(400).json({ message: "No file uploaded" });
+            }
+
             const tempFilePath = req.file.path;
 
             try {
