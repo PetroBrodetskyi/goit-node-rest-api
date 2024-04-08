@@ -11,7 +11,7 @@ import {
 import validateBody from "../helpers/validateBody.js" 
 import { createContactSchema, updateContactSchema, updateFavoriteSchema } from "../schemas/contactsSchemas.js";
 import { validateId } from "../middlewares/idValidator.js";
-import { authanticate } from "../middlewares/authanticate.js"
+import { authanticate } from "../middlewares/authanticate.js";
 
 const contactsRouter = express.Router();
 
