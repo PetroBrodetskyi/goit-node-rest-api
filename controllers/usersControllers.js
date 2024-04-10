@@ -63,7 +63,7 @@ export const verifyEmail = ctrlWrapper(async (req, res) => {
     const user = await User.findOne({ verificationToken });
 
     if (!user) {
-        throw HttpError(401, "Email not found");
+        throw HttpError(404, "Email not found");
     }
 
     await User.findByIdAndUpdate(user._id, {verify: true, verificationToken: null})
@@ -73,13 +73,23 @@ export const verifyEmail = ctrlWrapper(async (req, res) => {
 
 export const resendVerifyEmail = ctrlWrapper(async (req, res) => {
     const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ message: "missing required field email" });
+    }
+    
     const user = await User.findOne({ email });
 
     if (!user) {
         throw HttpError(401, "Email not found");
     }
+
     if (user.verify) {
-        throw HttpError(401, "Email already verify");
+        throw HttpError(400, "Verification has already been passed");
+    }
+
+    if (user.verifiedEmailSent) {
+        throw HttpError(400, "Verification email already sent");
     }
 
     const verifyEmail = {
@@ -88,8 +98,9 @@ export const resendVerifyEmail = ctrlWrapper(async (req, res) => {
     };
 
     await sendEmail(verifyEmail);
+    await User.findByIdAndUpdate(user._id, {verify: true, verifiedEmailSent: true })
 
-    res.status(200).json({ message: "Verify email send succes" });
+    res.status(200).json({ message: "Verification email sent" });
 });
 
 
