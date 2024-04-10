@@ -12,16 +12,3 @@ const sendEmail = async (data) => {
 }
 
 export default sendEmail;
-
-
-
-// const email = {
-//   to: "tagay43453@rartg.com",
-//   from: "petro.brodetskyi@ukr.net",
-//   subject: "Test email",
-//   html: "<p><strong>Test email</strong> from localhost: 3000</p>"
-// }
-
-// sgMail.send(email)
-//   .then(() => console.log("Email send success"))
-//   .catch (error => console.log(error.message));
